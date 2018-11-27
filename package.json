@@ -10,17 +10,17 @@
   },
   "author": "Gilberto Carranzaa",
   "jest": {
-    "testEnvironment" : "node",
-    "testPathIgnorePatterns" : [
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
       "/node_modules"
     ],
-    "coverageReporters" :[
+    "coverageReporters": [
       "html",
       "json",
       "lcov"
     ],
-    "moduleNameMapper" : {
-      "^mongoose$" : "<rootDir>/node_modules/mongoose"
+    "moduleNameMapper": {
+      "^mongoose$": "<rootDir>/node_modules/mongoose"
     }
   },
   "license": "ISC",
