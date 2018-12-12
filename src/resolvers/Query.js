@@ -33,17 +33,16 @@ function movie(_, args, context, info) {
 }
 
 function me(_, args, context, info) {
-
     if (!context.user) {
-        throw new Error("Authentication required");
+        throw new Error('Authentication required');
     }
 
-    return Users.findById(context.user._id).populate("subscription_id")
-                .then((user) => {
-                    return user;
-                }).catch((err) => {
-                    throw err;
-                });
+    return Users.findById(context.user._id)
+        .populate('subscription_id').then(user => {
+            return user.toObject();
+        }).catch(err => {
+            throw err;
+        });
 }
 
 module.exports = {

@@ -1,33 +1,31 @@
-const {GraphQLServer} = require('graphql-yoga');
+const { GraphQLServer } = require('graphql-yoga');
+const { importSchema } = require('graphql-import');
+const { makeExecutableSchema } = require('graphql-tools');
+const { MONGO_URI, MONGO_URI_TEST } = require('./const');
+const mongoose = require('mongoose');
 const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
-const mongoose = require('mongoose');
 const verifyToken = require('./utils/verifyToken');
-
-const {importSchema} = require('graphql-import');
-const {makeExecutableSchema} = require('graphql-tools');
-const {MONGO_URI, TEST_MONGO_URI} = require('./const');
+const mongoUri = process.env.NODE_ENV === 'test' ? MONGO_URI_TEST : MONGO_URI;
 
 const typeDefs = importSchema('./src/schema.graphql');
 
-const mongoUri = process.env.NODE_ENV === "TEST" ? TEST_MONGO_URI : MONGO_URI;
+mongoose.connect(mongoUri, { useNewUrlParser: true });
 
-mongoose.connect(mongoUri, { useNewUrlParser: true })
+const db = mongoose.connection;
 
-const db = mongoose.connection
-
-db.on('error', () => console.log("Failed to connect to mongo"))
-    .once('open', () => console.log("Connected to database"))
+db.on('error', () => console.log('Fallo al conectar MongoDB'));
+db.on('connected', () => console.log('Conectado a la base de datos'));
 
 const resolvers = {
     Query,
     Mutation
-}
+};
 
-const schema = {
+const schema = makeExecutableSchema({
     typeDefs,
     resolvers
-}
+})
 
 const server = new GraphQLServer({
     schema,
@@ -39,14 +37,13 @@ const server = new GraphQLServer({
 })
 
 const options = {
-    port:process.env.PORT || 8000,
+    port: process.env.PORT || 8000,
     endpoint: '/graphql',
     playground: '/playground',
-    cors : {
-        credentials: true,
-        origin: ["http://localhost:3000"]
+    cors: {
+        origin: '*'
     }
-}
+};
 
 server.start(options, 
     ({port}) => console.log(`Magic start in port ${port}`))
